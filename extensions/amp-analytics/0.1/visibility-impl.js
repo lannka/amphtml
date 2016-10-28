@@ -295,11 +295,22 @@ export class Visibility {
     this.listeners_[resId].push({config, callback, state, shouldBeVisible});
     this.resources_.push(res);
 
-    if (this.scheduledRunId_ === null) {
-      this.scheduledRunId_ = this.timer_.delay(() => {
-        this.scrollListener_();
-      }, LISTENER_INITIAL_RUN_DELAY_);
-    }
+    this.observeIntersection_(element);
+    // if (this.scheduledRunId_ === null) {
+    //   this.scheduledRunId_ = this.timer_.delay(() => {
+    //     this.scrollListener_();
+    //   }, LISTENER_INITIAL_RUN_DELAY_);
+    // }
+  }
+
+  observeIntersection_(element) {
+    new IntersectionObserver(entries => {
+      entries.forEach(change => {
+        this.scrollListener_(change);
+      });
+    }, {
+      threshold: [0, 0.1, 1],
+    }).observe(element);
   }
 
   /** @private */
@@ -309,11 +320,11 @@ export class Visibility {
         state == VisibilityState.INACTIVE) {
       this.backgrounded_ = true;
     }
-    this.scrollListener_();
+    // this.scrollListener_();
   }
 
   /** @private */
-  scrollListener_() {
+  scrollListener_(opt_change) {
     if (this.scheduledRunId_ != null) {
       this.timer_.cancel(this.scheduledRunId_);
       this.scheduledRunId_ = null;
@@ -328,7 +339,7 @@ export class Visibility {
         continue;
       }
 
-      const change = res.element.getIntersectionChangeEntry();
+      const change = opt_change || res.element.getIntersectionChangeEntry();
       const ir = change.intersectionRect;
       const br = change.boundingClientRect;
       const visible = br.height * br.width == 0 ? 0 :
@@ -339,8 +350,8 @@ export class Visibility {
         const shouldBeVisible = !!listeners[c]['shouldBeVisible'];
         if (this.updateCounters_(visible, listeners[c], shouldBeVisible) &&
             this.viewer_.isVisible() == shouldBeVisible) {
-          this.prepareStateForCallback_(listeners[c]['state'],
-              change.rootBounds, br, ir);
+          // this.prepareStateForCallback_(listeners[c]['state'],
+          //     change.rootBounds, br, ir);
           listeners[c].callback(listeners[c]['state']);
           listeners.splice(c, 1);
         }
