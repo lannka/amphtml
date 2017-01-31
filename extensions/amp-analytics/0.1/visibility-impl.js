@@ -457,10 +457,7 @@ export class Visibility {
         }
 
         const state = listener.state;
-        const lastChange = state[LAST_CHANGE_ENTRY];
-        const lastVisible = lastChange ? lastChange.intersectionRatio * 100 : 0;
-        if (this.updateCounters_(
-                lastVisible, listener, /* shouldBeVisible */ false)) {
+        if (this.updateCounters_(0, listener, /* shouldBeVisible */ false)) {
           this.prepareStateForCallback_(state, resource.getLayoutBox());
           listener.callback(state);
           listeners.splice(j, 1);

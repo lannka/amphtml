@@ -38,9 +38,14 @@
         },
         "triggers": {
           "pageVisible": {
-            "on": "visible",
+            "on": "hidden",
             "request": "visibility",
-            "vars": { "type": "pageVisible" }
+            "visibilitySpec": {
+              "selector": "#img-2",
+              "selectionMethod": "scope",
+              "totalTimeMin": 5000
+            },
+            "vars": { "type": "hidden" }
           },
           "imgVisible": {
             "on": "visible",
@@ -48,7 +53,7 @@
             "visibilitySpec": {
               "selector": "#img-2",
               "selectionMethod": "scope",
-              "visiblePercentageMin": 10
+              "totalTimeMin": 4000
             },
             "vars": { "type": "imgVisible" }
           }
